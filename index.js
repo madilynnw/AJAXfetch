@@ -74,6 +74,28 @@ initialLoad();
  * - As an added challenge, try to do this on your own without referencing the lesson material.
  */
 
+axios.interceptors.request.use((request) => {
+  request.metadata = request.metadata || {};
+  return request;
+});
+
+axios.interceptors.response.use(
+  (response) => {
+    response.config.metadata.endTime = new Date().getTime();
+    response.config.metadata.durationInMS = response.config.metadata;
+
+    console.log("Request took ${response.config.metadata.duration}");
+    return response;
+  },
+  (error) => {
+    error.config.metadata.endTime = new Date().getTime();
+    error.config.metadata.durationInMS = error.config.metadata.endTime;
+
+    console.log("Request took ${error.config.metadata.durationInMS}");
+    throw error;
+  }
+);
+
 /**
  * 6. Next, we'll create a progress bar to indicate the request is in progress.
  * - The progressBar element has already been created for you.
